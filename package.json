@@ -11,5 +11,8 @@
     "repository": {
         "type": "git",
         "url": "https://github.com/PoEManager/Backend-Database"
+    },
+    "dependencies": {
+        "mariadb": "^2.1.0"
     }
 }
