@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS `Users`;
 CREATE TABLE `Users` (
     `user_id`   INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `defaultlogin_id` INT UNSIGNED NOT NULL UNIQUE,
+    `wallet_restriction_id` INT UNSIGNED NOT NULL UNIQUE,
     `nickname` VARCHAR(30) CHARACTER SET utf32 COLLATE utf32_unicode_ci NOT NULL,
     `verified` BOOLEAN NOT NULL,
     `change_uid` BINARY(16) UNIQUE,
@@ -15,14 +16,20 @@ CREATE TABLE `Users` (
     CONSTRAINT `CHECK_nickname` CHECK (
         `nickname` REGEXP '^[A-Za-z0-9_\-]{5,20}$'
     ),
-    CONSTRAINT `FK_defaultlogins` FOREIGN KEY (`defaultlogin_id`) REFERENCES `DefaultLogins` (`defaultlogin_id`)
+    FOREIGN KEY (`defaultlogin_id`) REFERENCES `DefaultLogins` (`defaultlogin_id`),
+    FOREIGN KEY (`wallet_restriction_id`) REFERENCES `WalletRestrictions` (`wallet_restriction_id`)
 );
 
--- when a user is deleted, the default login data will also be deleted
+-- when a user is deleted, the associated data will also be deleted
 CREATE TRIGGER `TRIGG_delete_defaultlogin_on_user_delete` 
 AFTER DELETE ON `Users`
 FOR EACH ROW
+BEGIN
+    -- delete DefaultLogins
     DELETE FROM `DefaultLogins` WHERE `DefaultLogins`.`defaultlogin_id` = `OLD`.`defaultlogin_id`;
+    -- delete WalletRestrictions
+    DELETE FROM `WalletRestrictions` WHERE `WalletRestrictions`.`wallet_restriction_id` = `OLD`.`wallet_restriction_id`;
+END;
 
 -- 
 CREATE TRIGGER `TRIGG_change_meta_null_at_the_same_time` 

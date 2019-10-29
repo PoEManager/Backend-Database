@@ -56,6 +56,7 @@ async function run() {
 
 async function exec() {
     await runSQL('sql/user/defaultlogin.sql');
+    await runSQL('sql/user/wallet-restriction.sql');
     await runSQL('sql/user/user.sql');
 }
 
