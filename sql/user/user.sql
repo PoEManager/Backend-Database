@@ -3,8 +3,9 @@ DROP TABLE IF EXISTS `Users`;
 
 CREATE TABLE `Users` (
     `user_id`   INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `defaultlogin_id` INT UNSIGNED NOT NULL UNIQUE,
+    `defaultlogin_id` INT UNSIGNED UNIQUE,
     `wallet_restriction_id` INT UNSIGNED NOT NULL UNIQUE,
+    `google_uid` VARCHAR(21) UNIQUE, -- Google UIDs are 21 chars long
     `nickname` VARCHAR(30) CHARACTER SET utf32 COLLATE utf32_unicode_ci NOT NULL,
     `verified` BOOLEAN NOT NULL,
     `change_uid` BINARY(16) UNIQUE,
@@ -15,6 +16,9 @@ CREATE TABLE `Users` (
     PRIMARY KEY(`user_id`),
     CONSTRAINT `CHECK_nickname` CHECK (
         `nickname` REGEXP '^[A-Za-z0-9_\-]{5,20}$'
+    ),
+    CONSTRAINT `CHECK_logins_present` CHECK (
+        (`defaultlogin_id` IS NOT NULL) OR (`google_uid` IS NOT NULL)
     ),
     FOREIGN KEY (`defaultlogin_id`) REFERENCES `DefaultLogins` (`defaultlogin_id`),
     FOREIGN KEY (`wallet_restriction_id`) REFERENCES `WalletRestrictions` (`wallet_restriction_id`)
