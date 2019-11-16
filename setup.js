@@ -1,4 +1,4 @@
-#!/bin/env node
+#!/usr/bin/node
 
 const mariadb = require('mariadb');
 const fs = require('fs');
